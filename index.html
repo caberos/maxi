@@ -1,4 +1,3 @@
- # maxi
  <!DOCTYPE html>
  <html lang="es">
    <head>
@@ -28,10 +27,25 @@
          }
        .left {
          width: 20%;
+         background-color:yellowgreen;
          }
  
        .right {
          width: 80%;
+         background-color:aqua;
+       }
+
+       .fixture{
+        position: relative;
+        background-color: chocolate;
+        height: 400px;
+       }
+
+       .clasification{
+        position: relative;
+        background-color: grey;
+        height: 400px;
+       
        }
  
        .row:after {
@@ -49,7 +63,7 @@
    </head>
    <body>
      <div class="row">
-       <div class="column left" style="background-color:yellowgreen;">
+       <div class="column left">
          <div>
            <h2>Columndddddd 1</h2>
              <p>Some text..1</p></div>
@@ -58,13 +72,12 @@
            <p>Some text..2</p></div>
          
        </div>
-       <div class="column right" style="background-color:blanchedalmond;">
-         <div><h2>Columndddddd 1</h2>
-           <p>Some text..</p></div>
-         <div><h2>Columndddddd 12</h2>
-           <p>Some text..</p></div>
-         <div><h2>Columndddddd 13</h2>
-           <p>Some text..</p></div>
+       <div class="column right" >
+         <div class="fixture"><h2>Rol de partidos</h2>
+           </div>
+         <div class="clasification"><h2>Clasificacion</h2>
+           <p>Categoria Maxi</p></div>
+         
        </div>
      </div>
    </div>
