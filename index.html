@@ -1,0 +1,73 @@
+ # maxi
+ <!DOCTYPE html>
+ <html lang="es">
+   <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width-device-width, initial-scale-1.0" />
+     <meta http-equiv="X-UA-Compatible" content="ie-edge" />
+     <style>
+       * {
+         box-sizing: border-box;
+       }
+ 
+       .header {
+         border:  solid red;
+         color: blue;
+         border-color: brown;
+       }
+ 
+       .title.page {
+         position: relative;
+         left: 25%;
+       }
+ 
+       .column {
+         float: left;
+         padding: 10px;
+         height: 800px; 
+         }
+       .left {
+         width: 20%;
+         }
+ 
+       .right {
+         width: 80%;
+       }
+ 
+       .row:after {
+         content: "";
+         display: table;
+         clear: both;
+         }
+       </style>
+     <title>Maxi Basquet Cochabamba</title>
+     <div class="header">
+       <div class="title page">
+         <h1>Campeonato Maxi de Basquetball Cochabamba</h1>
+       </div>
+     </div>
+   </head>
+   <body>
+     <div class="row">
+       <div class="column left" style="background-color:yellowgreen;">
+         <div>
+           <h2>Columndddddd 1</h2>
+             <p>Some text..1</p></div>
+         <div>
+           <h2>Columndddddd 12</h2>
+           <p>Some text..2</p></div>
+         
+       </div>
+       <div class="column right" style="background-color:blanchedalmond;">
+         <div><h2>Columndddddd 1</h2>
+           <p>Some text..</p></div>
+         <div><h2>Columndddddd 12</h2>
+           <p>Some text..</p></div>
+         <div><h2>Columndddddd 13</h2>
+           <p>Some text..</p></div>
+       </div>
+     </div>
+   </div>
+   </body>
+ </html>
+ 
