@@ -1,73 +1,262 @@
- # maxi
- <!DOCTYPE html>
- <html lang="es">
-   <head>
-     <meta charset="UTF-8" />
-     <meta name="viewport" content="width-device-width, initial-scale-1.0" />
-     <meta http-equiv="X-UA-Compatible" content="ie-edge" />
-     <style>
-       * {
-         box-sizing: border-box;
-       }
- 
-       .header {
-         border:  solid red;
-         color: blue;
-         border-color: brown;
-       }
- 
-       .title.page {
-         position: relative;
-         left: 25%;
-       }
- 
-       .column {
-         float: left;
-         padding: 10px;
-         height: 800px; 
-         }
-       .left {
-         width: 20%;
-         }
- 
-       .right {
-         width: 80%;
-       }
- 
-       .row:after {
-         content: "";
-         display: table;
-         clear: both;
-         }
-       </style>
-     <title>Maxi Basquet Cochabamba</title>
-     <div class="header">
-       <div class="title page">
-         <h1>Campeonato Maxi de Basquetball Cochabamba</h1>
-       </div>
-     </div>
-   </head>
-   <body>
-     <div class="row">
-       <div class="column left" style="background-color:yellowgreen;">
-         <div>
-           <h2>Columndddddd 1</h2>
-             <p>Some text..1</p></div>
-         <div>
-           <h2>Columndddddd 12</h2>
-           <p>Some text..2</p></div>
-         
-       </div>
-       <div class="column right" style="background-color:blanchedalmond;">
-         <div><h2>Columndddddd 1</h2>
-           <p>Some text..</p></div>
-         <div><h2>Columndddddd 12</h2>
-           <p>Some text..</p></div>
-         <div><h2>Columndddddd 13</h2>
-           <p>Some text..</p></div>
-       </div>
-     </div>
-   </div>
-   </body>
- </html>
- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: brown;
+            color: blue;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: nowrap;
+            padding: 20px;
+        }
+
+        .column {
+            padding: 10px;
+        }
+
+        .menu {
+            background-color: yellowgreen;
+            width: 20%;
+        }
+
+        .table-container {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .table-container .fixture,
+        .table-container .clasification {
+            margin-bottom: 20px;
+        }
+
+        table {
+            background: rgba(240, 248, 20, 0.3);
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+            border: 2px solid red;
+            margin: 0 auto;
+        }
+
+        th {
+            background-color: rgba(5, 5, 5, 0.95);
+            height: 15px;
+            border-bottom: 1px solid rgb(91, 111, 170);
+            color: rgb(120, 120, 120);
+            border: 2px solid red;
+        }
+
+        td {
+            color: rgba(100, 100, 100, 0.6);
+            height: 15px;
+            border: 2px solid red;
+        }
+
+        tr:nth-child(even) {
+            background-color: #bdb6b6;
+            border: 2px solid rgb(21, 6, 105);
+        }
+    </style>
+    <title>Maxi Basquet Cochabamba</title>
+</head>
+<body>
+    <div class="header">
+        <h1>Campeonato Maxi de Basquetball Cochabamba</h1>
+    </div>
+    
+    <div class="row">
+        
+        <div class="column table-container">
+            <div id="rol" class="fixture">
+                <h2 style="text-align: center;">Rol de partidos</h2>
+                <select id="sheet-select" style="display: none;"></select>
+                <div id="output-div-games"></div>
+            </div>
+        </div>
+        <div class="column table-container">
+            <div class="clasification">
+                <h2 style="text-align: center;">Clasificación</h2>
+                <p style="text-align: center;">Categoría Maxi</p>
+                <div id="output-div"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let workbook;
+        document.getElementById('sheet-select').addEventListener('change', handleSheetChange, false);
+
+        async function fetchReadExcel() {
+            try {
+                const response = await fetch('fixture.xlsx');
+                const arrayBuffer = await response.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+                workbook = XLSX.read(data, { type: 'array' });
+
+                // Llenar el selector de hojas
+                const sheetSelect = document.getElementById('sheet-select');
+                sheetSelect.innerHTML = '';
+                workbook.SheetNames.forEach((sheetName, index) => {
+                    if (sheetName !== "Table 1") {
+                        const option = document.createElement('option');
+                        option.value = index;
+                        option.textContent = sheetName;
+                        sheetSelect.appendChild(option);
+                    }
+                });
+                sheetSelect.style.display = 'block';
+
+                // Mostrar la primera hoja por defecto (opcional)
+                if (sheetSelect.options.length > 1) {
+                    sheetSelect.selectedIndex = 0;
+                    displayFixture(XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[1]]));
+                }
+            } catch (error) {
+                console.error('Error reading Excel file:', error);
+            }
+        }
+
+        function handleSheetChange(e) {
+            const sheetIndex = e.target.value;
+            const sheetName = workbook.SheetNames[sheetIndex];
+            const worksheet = workbook.Sheets[sheetName];
+            const json = XLSX.utils.sheet_to_json(worksheet);
+            displayFixture(json);
+        }
+
+        function displayFixture(data) {
+            const outputDiv = document.getElementById('output-div-games');
+            outputDiv.innerHTML = '';
+
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            // Crear encabezados de tabla
+            if (data.length > 0) {
+                const headers = Object.keys(data[0]);
+                const trHead = document.createElement('tr');
+                headers.forEach(header => {
+                    const th = document.createElement('th');
+                    th.textContent = header;
+                    trHead.appendChild(th);
+                });
+                thead.appendChild(trHead);
+
+                // Crear filas de datos
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    headers.forEach(header => {
+                        const td = document.createElement('td');
+                        if (header === "Fecha") {
+                            td.textContent = textToDate(row[header]);
+                        } else {
+                            td.textContent = row[header];
+                        }
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                outputDiv.appendChild(table);
+            } else {
+                outputDiv.textContent = 'No data available in the selected sheet.';
+            }
+        }
+
+        function textToDate(dateString) {
+            const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+            
+            const day = dateString.match(/\d{2}/)[0];
+            const monthString = dateString.match(/de\s(\w+)\sde/)[1];
+            const year = dateString.match(/de\s(\d{4})/)[1];
+
+            const monthIndex = months.indexOf(monthString) + 1; 
+            if (monthIndex === 0) {
+                throw new Error("Mes no válido en la cadena de texto.");
+            }
+
+            const month = monthIndex.toString().padStart(2, '0');
+            const formattedDate = `${day}/${month}/${year}`;
+
+            return formattedDate;
+        }
+
+        fetchReadExcel();
+    </script>
+
+    <script>
+        async function fetchAndReadExcel() {
+            try {
+                const response = await fetch('clasificacion.xlsx');
+                const arrayBuffer = await response.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const json = XLSX.utils.sheet_to_json(worksheet);
+                displayData(json);
+            } catch (error) {
+                console.error('Error reading Excel file:', error);
+            }
+        }
+
+        function displayData(data) {
+            const outputDiv = document.getElementById('output-div');
+            outputDiv.innerHTML = '';
+
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            // Crear encabezados de tabla
+            const headers = Object.keys(data[0]);
+            const trHead = document.createElement('tr');
+            headers.forEach(header => {
+                const th = document.createElement('th');
+                th.textContent = header;
+                trHead.appendChild(th);
+            });
+            thead.appendChild(trHead);
+
+            // Crear filas de datos
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                headers.forEach(header => {
+                    const td = document.createElement('td');
+                    td.textContent = row[header];
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+
+            table.appendChild(thead);
+            table.appendChild(tbody);
+            outputDiv.appendChild(table);
+        }
+
+        fetchAndReadExcel();
+    </script>
+</body>
+</html>
